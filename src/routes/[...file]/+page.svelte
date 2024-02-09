@@ -1,9 +1,9 @@
-<div class="row container-fluid">
+<!-- breadcrumbs
+    <div class="row container-fluid">
     <div class="col mb-2">
         {#await data}
         ...
         {:then data}
-        <!-- breadcrumbs -->
         {#if data.paths!=undefined && data.paths!=null && data.paths.length>0}
         {#each data.paths as pathelem, index}
         <a href={pathelem.path}>{pathelem.name==''?'home':pathelem.name}</a> {data.paths.length-1>index?' / ':''}
@@ -12,10 +12,9 @@
         {/await}
     </div>
 </div>
-<div class="row container-fluid">
+-->
+<div class="row mt-3">
     <div class="col">
-        <div class="row w-100">
-            <div class="col">
                 {#await data}
                 ...
                 {:then result}
@@ -28,8 +27,6 @@
                 {:catch error}
                 {error.message}
                 {/await}
-            </div>
-        </div>
     </div>
 </div>
 <script>
