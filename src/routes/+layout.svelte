@@ -1,4 +1,4 @@
-    <div class="container-fluid pe-0" style="background-color: #1849cf;">
+    <div class="container-fluid pe-0" style="background-color: #0d6efd;"> <!--#1849cf-->
         <!--
         <a class="navbar-brand ms-2" href="#">
             <img src="/logo-light.svg" alt="Logo" height="36" class="d-inline-block my-auto me-2">
