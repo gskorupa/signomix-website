@@ -11,7 +11,12 @@
                 <span style="color: rgb(255, 255, 255);">Signomix</span>
             </div>
             <div class="col-6 text-end my-auto" style="color: rgb(255, 255, 255);">
-                PL EN
+                <a href="/pl/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                    <img src="/flags/4x3/pl.svg" height="16px" title="polski"/>
+                </a> 
+                <a href="/en/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                    <img src="/flags/4x3/gb.svg" height="16px" title="english"/>
+                </a>
             </div>
         </div>
     </div>
