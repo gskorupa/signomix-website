@@ -21,7 +21,7 @@
     </div>
 </div>
 <div class="container-fluid">
-    <slot></slot>
+<slot></slot>
 </div>
 <div class="container-fluid">
     <footer class="py-2 my-3 border-top">
@@ -33,14 +33,6 @@
                 <a href="https://github.com/signomix"><i class="bi bi-github h4 mx-1"></i></a>
                 <a href="https://www.linkedin.com/company/experiot"><i class="bi bi-linkedin h4 mx-1"></i></a>
             </div>
-            <!--
-            <div class="col">
-                <a href="https://experiot.pl" target="_blank" class="text-body-secondary">&copy; 2024 EXPERIOT</a>
-            </div>
-            <div class="col-9 text-end">
-                <a class="text-body-secondary" href="https://github.com/gskorupa/cricket-website-template" target="_blank"><i class="bi bi-github h4 text-black-50"></i></a>
-            </div>
-            -->
         </div>
     </footer>
 </div>
