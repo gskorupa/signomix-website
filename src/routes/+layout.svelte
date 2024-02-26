@@ -29,7 +29,7 @@
             <div class="col">
                 <a href="mailto:signomix@experiot.pl"><i class="bi bi-envelope-at h4 mx-1"></i></a>
                 <a href="https://discord.gg/ATMKpZyePm"><i class="bi bi-discord h4 mx-1"></i></a>
-                <a href="https://twitter.com/SignomixIoT"><i class="bi bi-twitter h4 mx-1"></i></a>
+                <a href="https://x.com/SignomixIoT"><i class="bi bi-twitter-x h4 mx-1"></i></a>
                 <a href="https://github.com/signomix"><i class="bi bi-github h4 mx-1"></i></a>
                 <a href="https://www.linkedin.com/company/experiot"><i class="bi bi-linkedin h4 mx-1"></i></a>
             </div>
