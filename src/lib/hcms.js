@@ -1,18 +1,18 @@
 export const hcms = {
-    getDocuments: async function (devMode, serviceUrl, path, indexFileName) {
+    getDocuments: async function (devMode, serviceUrl, pathObject, indexFileName) {
         console.log("hcms.getDocuments: devMode=" + devMode)
-        let docs = [
-            { content:"This is <b>test</b> doc", path: "/doc1" },
-        ]
         if (devMode) {
-            return { paths: this.getPaths(path.params.file), documents: docs }
+            let docs = [
+                { content:"<b>test</b> doc", path: "/doc1" },
+            ]
+            return { paths: this.getPaths(pathObject.params.file), documents: docs }
         }
         let method = 'GET'
         let url = serviceUrl + "?path="
-        if(path.params.file.length==0 && indexFileName!=undefined){
+        if(pathObject.params.file.length==0 && indexFileName!=undefined){
             url=url+indexFileName
         }else{
-            url=url+path.params.file
+            url=url+pathObject.params.file
         }
         console.log("hcms.getDocuments: url=" + url)
         const headers = new Headers()
@@ -20,11 +20,11 @@ export const hcms = {
         const response = await fetch(url, { method: method, mode: 'cors', headers: headers })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(response.statusText)
+                    throw new Error(response.statusText + " " + response.status)
                 }
                 let documents = response.json()
                 return {
-                    paths: this.getPaths(path.params.file),
+                    paths: this.getPaths(pathObject.params.file),
                     documents: documents
                 }
             })
@@ -68,6 +68,70 @@ export const hcms = {
             path += paths[i]
         }
         return path
+    },
+    getDocument: function (devMode, serviceUrl, path, indexFile, token, type) {
+        try {
+            return Promise.resolve(getHcmsDocument(devMode, serviceUrl, path, indexFile, token, type)).then((result) => result);
+        } catch (e) {
+            throw new Error(e);
+        }
     }
 
+}
+
+const getHcmsDocument = async function (devMode, serviceUrl, path, indexFile, token, type) {
+    if (devMode) {
+        if (type != undefined && type == "navigation") {
+            return {
+                "title": "EXPERIOT",
+                "logo": "logo.svg",
+                "elements": [
+                    { url: { pl: "pl", en: "en" }, label: { en: "Home", pl: "Start" }, target: "" }
+                ]
+            }
+        } else {
+            return {
+                document:
+                {
+                    content: "<b>test</b> doc<br>" + path
+                }
+            }
+        }
+    }
+    try {
+        const headers = new Headers()
+        //headers.set('Accept', 'application/json');
+        if (token != undefined && token != null) {
+            headers.set('Authentication', token);
+        }
+        let endpoint;
+        if (typeof path === 'string' || path instanceof String) {
+            //console.log("path is a string")
+            endpoint = serviceUrl + "/api/document?path=" + path
+        } else {
+            //console.log("path is an object")
+            endpoint = serviceUrl + "/api/document?path=/" + path.params.file
+        }
+        if(!(endpoint.endsWith(".md")||endpoint.endsWith(".html")||endpoint.endsWith(".json"))){
+            endpoint = endpoint + "/"+indexFile
+        }
+        console.log("endpoint:", endpoint)
+        const res = await fetch(endpoint, {
+            mode: 'cors',
+            method: 'GET',
+            headers: headers
+        });
+        let data;
+        //console.log("res:", res.type)
+        //console.log("res:", res.status)
+        if (res.status == 200) {
+            return await res.json();
+        } else {
+            data = { content: "No content" }
+            return data
+        }
+    } catch (e) {
+        console.log('HCMS ERROR', e)
+        throw new Error(e);
+    }
 }
