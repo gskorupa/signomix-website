@@ -18,12 +18,7 @@
                 {#await data}
                 ...
                 {:then result}
-                {#if result!=undefined && result!=null && result.documents!=null && result.documents!=undefined && result.documents.length>0}
-                {@html result.documents[0].content}
-                {:else}
-                <h1>404</h1>
-                <p>Page not found.</p>
-                {/if}
+                {@html result.content}
                 {:catch error}
                 {error.message}
                 {/await}
