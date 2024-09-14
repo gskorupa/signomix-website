@@ -6,22 +6,56 @@
         </a>
         -->
     <div class="row w-100">
-        <div class="col-6 h3 my-auto py-2">
+        <div class="col h3 my-auto py-2">
             <img src="/logo-light.svg" alt="Logo" height="36" class="d-none d-sm-inline">
+            {#if isBlog($page.url.pathname)}
+            <span style="color: rgb(255, 255, 255);">Signomix blog</span>
+            {:else}
             <span style="color: rgb(255, 255, 255);">Signomix</span>
+            {/if}
         </div>
-        <div class="col-6 text-end my-auto" style="color: rgb(255, 255, 255);">
+        <div class="col my-auto" style="color: rgb(255, 255, 255);">
+
+            <div class="h-100 my-auto">
+                {#if isPlVersion($page.url.pathname)}
+                <a href="/pl/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                    Home
+                </a>
+                <a href="/pl/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                    Blog
+                </a>
+                {:else}
+                <a href="/en/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                    Home
+                </a>
+                <a href="/en/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                    Blog
+                </a>
+                {/if}
+            </div>
+
+        </div>
+        <div class="col text-end my-auto" style="color: rgb(255, 255, 255);">
+            {#if isBlog($page.url.pathname)}
+            <a href="/pl/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
+            </a>
+            <a href="/en/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                <img src="/flags/4x3/gb.svg" height="16px" title="english" />
+            </a>
+            {:else}
             <a href="/pl/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
                 <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
             </a>
             <a href="/en/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
                 <img src="/flags/4x3/gb.svg" height="16px" title="english" />
             </a>
+            {/if}
         </div>
     </div>
 </div>
 <div class="container-fluid">
-<slot></slot>
+    <slot></slot>
 </div>
 <div class="container-fluid">
     <footer class="py-2 my-3 border-top">
@@ -36,3 +70,16 @@
         </div>
     </footer>
 </div>
+<script>
+    import { page } from '$app/stores';
+
+    function isBlog(pathname) {
+        console.log('isBlog', pathname);
+        return pathname.includes('blog');
+    }
+    function isPlVersion(pathname) {
+        console.log('isPlVersion', pathname);
+        return pathname.includes('/pl/') || pathname=='/';
+    }
+
+</script>

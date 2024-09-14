@@ -20,14 +20,17 @@ export const hcms = {
             return { paths: this.getPaths(pathObject.params.file), documents: docs }
         }
         let method = 'GET'
-        let url = serviceUrl + "?content=true&path="
+        let url = serviceUrl + "/api/docs?content=true&path="
         //console.log("hcms.getDocuments: path", pathObject)
-        if (pathObject.params.file.length == 0 && indexFileName != undefined) {
-            url = url + rootFolder + '/' + indexFileName
+        if (typeof pathObject === 'string' || pathObject instanceof String) {
+            url = url + rootFolder + '/' + pathObject
         } else {
-            url = url + rootFolder + '/' + pathObject.params.file
+            if (pathObject.params.file.length == 0 && indexFileName != undefined) {
+                url = url + rootFolder + '/' + indexFileName
+            } else {
+                url = url + rootFolder + '/' + pathObject.params.file
+            }
         }
-        //console.log("hcms.getDocuments: url=" + url)
         const headers = new Headers()
         headers.set('Accept', 'application/json');
         const response = await fetch(url, { method: method, mode: 'cors', headers: headers })
@@ -37,14 +40,14 @@ export const hcms = {
                 }
                 let documents = response.json()
                 return {
-                    paths: this.getPaths(pathObject.params.file),
+                    paths: this.getPaths(pathObject),
                     documents: documents
                 }
             })
             .catch(error => {
                 console.error('There was an error!', error)
                 return {
-                    paths: this.getPaths(pathObject.params.file),
+                    paths: this.getPaths(pathObject),
                     documents: []
                 }
             })
@@ -83,16 +86,14 @@ export const hcms = {
                 }
                 let documents = response.json()
                 return {
-                    //paths: this.getPaths(pathObject),
-                    paths: [],
+                    paths: this.getPaths(pathObject),
                     documents: documents
                 }
             })
             .catch(error => {
                 console.error('There was an error!', error)
                 return {
-                    //paths: this.getPaths(pathObject),
-                    paths: [],
+                    paths: this.getPaths(pathObject),
                     documents: []
                 }
             })
@@ -104,7 +105,13 @@ export const hcms = {
      * @returns {object} - paths
     */
     getPaths: function (docpath) {
-        let paths = docpath.split("/")
+        let paths;
+        //pathObject.params.file
+        if (typeof docpath === 'string' || docpath instanceof String) {
+            paths = docpath.split("/")
+        } else {
+            paths = docpath.params.file.split("/")
+        }
         //console.log("hcms.getPaths: paths=" + paths)
         // insert "home" path if not present
         if (paths.length > 0 && paths[0].length > 0) {
@@ -145,56 +152,12 @@ export const hcms = {
      * @returns {object} - document
      * @throws {Error} - error
      * */
-    getDocument: function (devMode, serviceUrl, path, indexFile, token, type) {
+    getDocument: function (devMode, serviceUrl, path, indexFile, rootFolder, token, type) {
         try {
-            return Promise.resolve(getHcmsDocument(devMode, serviceUrl, path, indexFile, token, type)).then((result) => result);
+            return Promise.resolve(getHcmsDocument(devMode, serviceUrl, path, indexFile, rootFolder, token, type)).then((result) => result);
         } catch (e) {
             throw new Error(e);
         }
-    },
-    getDocumentPaths: function(document, languages, indexFile) {
-        let paths = []
-        let names = []
-        let languageNames = []
-        let multilanguage = languages!=undefined && languages!=null && languages.length>0
-        try{
-            let pathNames = document.name.split('/')
-            let start=0
-            if(multilanguage){
-                start=2
-                languageNames=languages.split(',')
-            }else{
-                start=2
-                paths.push('/'+indexFile)
-                names.push('home')
-            }
-            for(let i=start;i<pathNames.length;i++){
-                let pathName = pathNames[i] 
-                let path = ''
-                for(let j=start;j<=i;j++){
-                    path += '/'+pathNames[j]
-                }
-                if(path.indexOf('.', path.lastIndexOf('/'))<0){
-                    path = path + '/'+indexFile
-                }
-                paths.push(path)
-                if(languageNames.includes(pathName)){
-                    names.push('home')
-                }else{
-                    names.push(pathName)
-                }
-            }
-            if(paths.length>1 && paths[paths.length-1]==paths[paths.length-2]){
-                //remove last element
-                paths.pop()
-                names.pop()
-            }
-            //console.log('getDocumentPaths paths',paths)
-            //console.log('getDocumentPaths names',names)
-        }catch(e){
-            //console.log('getDocumentPaths',e)
-        }
-        return {paths:paths,names:names}
     },
     /**
      * Find first document
@@ -217,9 +180,10 @@ export const hcms = {
             throw new Error(e);
         }
     }
+
 }
 
-const getHcmsDocument = async function (devMode, serviceUrl, path, indexFile, token, type) {
+const getHcmsDocument = async function (devMode, serviceUrl, path, indexFile, rootFolder, token, type) {
     //console.log("hcms.getDocument: devMode=" + devMode +" serviceUrl=" + serviceUrl)
     if (devMode) {
         if (type != undefined && type == "navigation") {
@@ -245,40 +209,38 @@ const getHcmsDocument = async function (devMode, serviceUrl, path, indexFile, to
         if (token != undefined && token != null) {
             headers.set('Authentication', token);
         }
+        let siteRoot = rootFolder == undefined ? "" : rootFolder
         let endpoint;
-        //console.log("path:", path)
         if (typeof path === 'string' || path instanceof String) {
             //console.log("path is a string")
-            endpoint = serviceUrl + "/api/document?name=" + path
+            endpoint = serviceUrl + "/api/document?name=" + siteRoot + path
         } else {
             //console.log("path is an object")
-            endpoint = serviceUrl + "/api/document?name=/" + path.file
+            endpoint = serviceUrl + "/api/document?name=/" + siteRoot + path.url.pathname //+ "/"+path.params.file
         }
         if (!(endpoint.endsWith(".md") || endpoint.endsWith(".html") || endpoint.endsWith(".json"))) {
-            endpoint = endpoint + "/" + indexFile
+            endpoint = endpoint + indexFile
         }
-        //console.log("endpoint:", endpoint)
         const res = await fetch(endpoint, {
             mode: 'cors',
             method: 'GET',
             headers: headers
         });
         let data;
-        //console.log("res:", res)
+        //console.log("res:", res.type)
         //console.log("res:", res.status)
         if (res.status == 200) {
-            if(res.type.toLowerCase() !== "file") {
-                return await res.json();
-            }else{
-                data = { content: "binary content" }
-                return data
-            }
+            //if(type.toLowerCase() !== "file") {
+            return await res.json();
+            //}else{
+            //    data = { content: "binary content" }
+            //    return data
+            //}
         } else {
             data = { content: "No content" }
             return data
         }
     } catch (e) {
-        console.log('HCMS ERROR', e)
         throw new Error(e);
     }
 }
