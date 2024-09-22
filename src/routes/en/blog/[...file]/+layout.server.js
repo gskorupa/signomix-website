@@ -18,14 +18,6 @@ function getLanguageFromPath(pathName, defaultLanguage) {
 
 export async function load(params) {
     let data = {}
-    //let selectedLanguage = getLanguageFromPath(params.url.pathname, process.env.PUBLIC_HCMS_LANGUAGE)   
-    //console.log('blog layout params:', params)
-    
-    /* let blogPath = params.ulr.pathname.substring(0, params.url.pathname.lastIndexOf('/'))
-    if(!blogPath.endsWith('/')){
-        blogPath += '/'
-    } */
-    //let posts = await hcms.findDocuments(dev, process.env.PUBLIC_HCMS_URL, blogPath, process.env.PUBLIC_HCMS_ROOT, 'status', 'published')  
     let posts = await hcms.findDocuments(dev, process.env.PUBLIC_HCMS_URL, params, process.env.PUBLIC_HCMS_ROOT, 'status', 'published', 'published', 'desc', true)  
     data.posts = posts
     return data;

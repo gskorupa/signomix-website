@@ -105,7 +105,7 @@
         <div>loading...</div>
         {:then link}
         {#each link as post}
-        {#if post.metadata.language == undefined || post.metadata.language == null}
+        {#if post.metadata.language == undefined || post.metadata.language == null || post.metadata.language == pageLanguage}
         <div>
             <b><a href="{trimWebsiteRoot(post.name)}">{post.metadata.title}</a></b><br>
             <i>{post.metadata.published}</i>

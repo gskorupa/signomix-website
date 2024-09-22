@@ -10,6 +10,7 @@ export async function load(params) {
         } else {
             let documentName = '/'+process.env.PUBLIC_HCMS_ROOT+params.url.pathname
             return await hcms.getDocument(dev, process.env.PUBLIC_HCMS_URL, documentName, process.env.PUBLIC_HCMS_ROOT, process.env.PUBLIC_HCMS_INDEX)
+            //return await hcms.getDocument(dev, process.env.PUBLIC_HCMS_URL, params, process.env.PUBLIC_HCMS_INDEX, process.env.PUBLIC_HCMS_ROOT)
         }
     } catch (err) {
         console.log(err)
