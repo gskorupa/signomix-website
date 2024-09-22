@@ -84,7 +84,7 @@
         }
     }
     function trimWebsiteRoot(path) {
-        return path.substring(websiteRoot.length+1)
+        return path.substring(websiteRoot.length + 1)
     }
     function printlog(data) {
         //console.log('blog posts (layout)', data)
@@ -92,37 +92,29 @@
     }   
 </script>
 {#await data then data}
-<div class="container-fluid">
-    <div class="row mt-4">
-        <div class="col-md-9 mb-2">
-            <div class="border rounded-2 p-2 w-100">
-                <slot></slot>
-            </div>
-            <!--     {#each data.posts as post}
-    <div class="container-fluid">
-        <h3>post {post.title}</h3>
-        {@html post.content}
-    </div>
-    {/each} -->
+<div class="row mt-4 gx-1">
+    <div class="col-md-9 mb-2 ">
+        <div class="border rounded-2 p-2 m-1">
+            <slot></slot>
         </div>
-        <div class="col-md-3 mb-2">
-            <div class="border rounded-2 p-2 w-100">
-                {printlog(data.posts)}
-                {#await data.posts.documents}
-                <div>loading...</div>
-                {:then link}
-                {#each link as post}
-                {#if post.metadata.language == 'en'}
-                <div>
-                    <b><a href="{trimWebsiteRoot(post.name)}">{post.metadata.title}</a></b><br>
-                    <i>{post.metadata.published}</i>
-                </div>
-                {/if}
-                {/each}
-                {:catch error}
-                <div>{error.message}</div>
-                {/await}
-            </div>
+    </div>
+    <div class="col-md-3 mb-2 ">
+        <div class="border rounded-2 p-2 m-1">
+        {printlog(data.posts)}
+        {#await data.posts.documents}
+        <div>loading...</div>
+        {:then link}
+        {#each link as post}
+        {#if post.metadata.language == undefined || post.metadata.language == null}
+        <div>
+            <b><a href="{trimWebsiteRoot(post.name)}">{post.metadata.title}</a></b><br>
+            <i>{post.metadata.published}</i>
+        </div>
+        {/if}
+        {/each}
+        {:catch error}
+        <div>{error.message}</div>
+        {/await}
         </div>
     </div>
 </div>
