@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { onMount } from 'svelte';
     import Analytics from "$lib/components/Analytics.svelte";
+    import { browser } from '$app/environment';
 
     export let data;
 
@@ -13,12 +14,33 @@
         console.log("isPlVersion", pathname);
         return pathname.includes("/pl/") || pathname == "/";
     }
+    
+    if (browser) {
+        document.addEventListener("DOMContentLoaded", function () {
+            // Sprawdź, czy użytkownik już podjął decyzję
+            if (!localStorage.getItem("sgxCookieConsent")) {
+                document.getElementById("cookie-banner").style.display = "block";
+            }
+
+            document.getElementById("cookie-accept").onclick = function () {
+                localStorage.setItem("sgxCookieConsent", "accepted");
+                document.getElementById("cookie-banner").style.display = "none";
+                // tutaj możesz dodać kod inicjujący cookies/statystyki
+            };
+
+            document.getElementById("cookie-reject").onclick = function () {
+                localStorage.setItem("sgxCookieConsent", "rejected");
+                document.getElementById("cookie-banner").style.display = "none";
+                // tutaj możesz dodać kod blokujący cookies/statystyki
+            };
+        });
+    }
 </script>
 
 {#await data then data}
-    {#if data.gtag != undefined && data.gtag != null && data.gtag != ""}
-        <Analytics g_tag={data.gtag} title="Signomix home"/>
-    {/if}
+{#if data.gtag != undefined && data.gtag != null && data.gtag != ""}
+<Analytics g_tag={data.gtag} title="Signomix home" />
+{/if}
 {/await}
 
 <div class="container-fluid pe-0" style="background-color: #0d6efd;">
@@ -31,84 +53,47 @@
         -->
     <div class="row w-100">
         <div class="col h3 my-auto py-2">
-            <img
-                src="/logo-light.svg"
-                alt="Logo"
-                height="36"
-                class="d-none d-sm-inline"
-            />
+            <img src="/logo-light.svg" alt="Logo" height="36" class="d-none d-sm-inline" />
             {#if isBlog($page.url.pathname)}
-                <span style="color: rgb(255, 255, 255);">Signomix blog</span>
+            <span style="color: rgb(255, 255, 255);">Signomix blog</span>
             {:else}
-                <span style="color: rgb(255, 255, 255);">Signomix</span>
+            <span style="color: rgb(255, 255, 255);">Signomix</span>
             {/if}
         </div>
         <div class="col my-auto" style="color: rgb(255, 255, 255);">
             <div class="h-100 my-auto">
                 {#if isPlVersion($page.url.pathname)}
-                    <a
-                        href="/pl/index.html"
-                        class="link-light underline-opacity-0 underline-opacity-hover-0"
-                    >
-                        Home
-                    </a>
-                    <a
-                        href="/pl/blog/index.md"
-                        class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2"
-                    >
-                        Blog
-                    </a>
+                <a href="/pl/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                    Home
+                </a>
+                <a href="/pl/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                    Blog
+                </a>
                 {:else}
-                    <a
-                        href="/en/index.html"
-                        class="link-light underline-opacity-0 underline-opacity-hover-0"
-                    >
-                        Home
-                    </a>
-                    <a
-                        href="/en/blog/index.md"
-                        class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2"
-                    >
-                        Blog
-                    </a>
+                <a href="/en/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                    Home
+                </a>
+                <a href="/en/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                    Blog
+                </a>
                 {/if}
             </div>
         </div>
         <div class="col text-end my-auto" style="color: rgb(255, 255, 255);">
             {#if isBlog($page.url.pathname)}
-                <a
-                    href="/pl/blog/index.md"
-                    class="link-light underline-opacity-0 underline-opacity-hover-0"
-                >
-                    <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
-                </a>
-                <a
-                    href="/en/blog/index.md"
-                    class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2"
-                >
-                    <img
-                        src="/flags/4x3/gb.svg"
-                        height="16px"
-                        title="english"
-                    />
-                </a>
+            <a href="/pl/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
+            </a>
+            <a href="/en/blog/index.md" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                <img src="/flags/4x3/gb.svg" height="16px" title="english" />
+            </a>
             {:else}
-                <a
-                    href="/pl/index.html"
-                    class="link-light underline-opacity-0 underline-opacity-hover-0"
-                >
-                    <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
-                </a>
-                <a
-                    href="/en/index.html"
-                    class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2"
-                >
-                    <img
-                        src="/flags/4x3/gb.svg"
-                        height="16px"
-                        title="english"
-                    />
-                </a>
+            <a href="/pl/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0">
+                <img src="/flags/4x3/pl.svg" height="16px" title="polski" />
+            </a>
+            <a href="/en/index.html" class="link-light underline-opacity-0 underline-opacity-hover-0 ms-2">
+                <img src="/flags/4x3/gb.svg" height="16px" title="english" />
+            </a>
             {/if}
         </div>
     </div>
@@ -120,22 +105,22 @@
     <footer class="py-2 my-3 border-top">
         <div class="row text-center">
             <div class="col">
-                <a href="mailto:signomix@experiot.pl"
-                    ><i class="bi bi-envelope-at h4 mx-1"></i></a
-                >
-                <a href="https://discord.gg/ATMKpZyePm"
-                    ><i class="bi bi-discord h4 mx-1"></i></a
-                >
-                <a href="https://x.com/SignomixIoT"
-                    ><i class="bi bi-twitter-x h4 mx-1"></i></a
-                >
-                <a href="https://github.com/signomix"
-                    ><i class="bi bi-github h4 mx-1"></i></a
-                >
-                <a href="https://www.linkedin.com/company/experiot"
-                    ><i class="bi bi-linkedin h4 mx-1"></i></a
-                >
+                <a href="mailto:signomix@experiot.pl"><i class="bi bi-envelope-at h4 mx-1"></i></a>
+                <a href="https://discord.gg/ATMKpZyePm"><i class="bi bi-discord h4 mx-1"></i></a>
+                <a href="https://x.com/SignomixIoT"><i class="bi bi-twitter-x h4 mx-1"></i></a>
+                <a href="https://github.com/signomix"><i class="bi bi-github h4 mx-1"></i></a>
+                <a href="https://www.linkedin.com/company/experiot"><i class="bi bi-linkedin h4 mx-1"></i></a>
             </div>
         </div>
     </footer>
+</div>
+<!-- Komponent cookies info -->
+<div id="cookie-banner"
+    style="position:fixed;bottom:0;left:0;width:100%;background:#f8f9fa;border-top:1px solid #ccc;padding:16px;z-index:1000;display:none;">
+    <span>
+        Ta strona używa plików cookies w celach statystycznych i funkcjonalnych.
+        <a href="/polityka-prywatnosci" target="_blank">Dowiedz się więcej</a>.
+    </span>
+    <button id="cookie-accept" class="btn btn-success btn-sm ms-2">Akceptuję</button>
+    <button id="cookie-reject" class="btn btn-secondary btn-sm ms-2">Odrzucam</button>
 </div>
