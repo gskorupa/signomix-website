@@ -2,6 +2,7 @@
     import { page } from "$app/stores";
     import { onMount } from 'svelte';
     import Analytics from "$lib/components/Analytics.svelte";
+    import CookieBanner from "$lib/components/CookieBanner.svelte";
     import { browser } from '$app/environment';
 
     export let data;
@@ -15,26 +16,6 @@
         return pathname.includes("/pl/") || pathname == "/";
     }
     
-    if (browser) {
-        document.addEventListener("DOMContentLoaded", function () {
-            // Sprawdź, czy użytkownik już podjął decyzję
-            if (!localStorage.getItem("sgxCookieConsent")) {
-                document.getElementById("cookie-banner").style.display = "block";
-            }
-
-            document.getElementById("cookie-accept").onclick = function () {
-                localStorage.setItem("sgxCookieConsent", "accepted");
-                document.getElementById("cookie-banner").style.display = "none";
-                // tutaj możesz dodać kod inicjujący cookies/statystyki
-            };
-
-            document.getElementById("cookie-reject").onclick = function () {
-                localStorage.setItem("sgxCookieConsent", "rejected");
-                document.getElementById("cookie-banner").style.display = "none";
-                // tutaj możesz dodać kod blokujący cookies/statystyki
-            };
-        });
-    }
 </script>
 
 {#await data then data}
@@ -114,13 +95,4 @@
         </div>
     </footer>
 </div>
-<!-- Komponent cookies info -->
-<div id="cookie-banner"
-    style="position:fixed;bottom:0;left:0;width:100%;background:#f8f9fa;border-top:1px solid #ccc;padding:16px;z-index:1000;display:none;">
-    <span>
-        Ta strona używa plików cookies w celach statystycznych i funkcjonalnych.
-        <a href="/polityka-prywatnosci" target="_blank">Dowiedz się więcej</a>.
-    </span>
-    <button id="cookie-accept" class="btn btn-success btn-sm ms-2">Akceptuję</button>
-    <button id="cookie-reject" class="btn btn-secondary btn-sm ms-2">Odrzucam</button>
-</div>
+<CookieBanner />

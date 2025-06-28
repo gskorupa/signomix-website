@@ -8,7 +8,7 @@
 
   // Sprawdź zgodę po stronie klienta
   if (typeof window !== 'undefined') {
-    consent = localStorage.getItem("sgxCookieConsent") === "accepted"
+    consent = localStorage.getItem("cookieConsent") === "accepted"
   }
 
   $: if (consent && typeof gtag !== 'undefined') {
